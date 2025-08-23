@@ -59,15 +59,35 @@ document.addEventListener('DOMContentLoaded', () => {
     animateElements.forEach(el => observer.observe(el));
 });
 
-// Add loading animation to images
+// Add loading animation to images with error handling
 document.addEventListener('DOMContentLoaded', () => {
     const images = document.querySelectorAll('img');
-    images.forEach(img => {
-        img.addEventListener('load', () => {
-            img.style.opacity = '1';
-        });
+    console.log('Found', images.length, 'images on the page');
+    
+    images.forEach((img, index) => {
+        console.log(`Image ${index + 1}:`, img.src);
+        
+        // Set initial opacity to 0
         img.style.opacity = '0';
         img.style.transition = 'opacity 0.3s ease';
+        
+        // Show image when it loads successfully
+        img.addEventListener('load', () => {
+            console.log('Image loaded successfully:', img.src);
+            img.style.opacity = '1';
+        });
+        
+        // Show image even if there's an error (so you can see broken images)
+        img.addEventListener('error', () => {
+            console.error('Failed to load image:', img.src);
+            img.style.opacity = '1'; // Show broken image
+        });
+        
+        // Fallback: if image is already loaded, show it immediately
+        if (img.complete) {
+            console.log('Image already loaded:', img.src);
+            img.style.opacity = '1';
+        }
     });
 });
 
